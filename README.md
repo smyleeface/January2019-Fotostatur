@@ -23,7 +23,7 @@ The following tools and accounts are required to complete these instructions.
 <details>
 <summary>Setup LambdaSharpTool and Deploy Skeleton Code</summary>
 
-1) Clone the Repo and go to the `src` directory.
+1) Clone the Repo and go to the `Fotostatur` directory.
 
 1) Install/update the λ# tool.
 
@@ -155,8 +155,8 @@ In `Fotostatur.ImageAnalyzer/Functions.cs` edit the `CompareFaces` and `ScoreCom
 
 [CompareFacesAsync Method](https://docs.aws.amazon.com/sdkfornet/v3/apidocs/items/Rekognition/MRekognitionCompareFacesAsyncCompareFacesRequestCancellationToken.html)
 
-1) Add a "headshot" of someone to the `src/headshots` directory.
-1) In `src/Module.yml`, find `HeadshotFileName` and replace the `TODO` with the filename (include extension) of the headshot.
+1) Add a "headshot" of someone to the `Fotostatur/headshots` directory.
+1) In `Fotostatur/Module.yml`, find `HeadshotFileName` and replace the `TODO` with the filename (include extension) of the headshot.
     > Note: These variables can be accessed from: `_headshotFileName`, `_comparingImageBucket`, and `_comparingImageKey`. See `InitializeAsync` in `Fotostatur.ImageAnalyzer/Functions.cs`.
 1) Compare the headshot and the image uploaded.
 1) Score the results from comparison using the `AddTotals` helper function to keep a running total.
@@ -200,7 +200,7 @@ To obtain Twitter keys, use the steps provided at the presentation. To create to
     lash encrypt SECRET
     ```
 
-    You will need to uncomment the `TwitterConsumerKey`, `TwitterConsumerSecret`, `TwitterAccessToken`, `TwitterAccessSecret` in `src/Module.yml` and add each encrypted value to their respective location. 
+    You will need to uncomment the `TwitterConsumerKey`, `TwitterConsumerSecret`, `TwitterAccessToken`, `TwitterAccessSecret` in `Fotostatur/Module.yml` and add each encrypted value to their respective location. 
 
 1) In `Fotostatur.ImageAnalyzer/Functions.cs` edit the `DownloadS3Image` method and uncomment `await DownloadS3Image();` in method `ProcessMessageAsync`.
     

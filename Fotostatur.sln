@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fotostatur.ImageAnalyzer", "src\Fotostatur.ImageAnalyzer\Fotostatur.ImageAnalyzer.csproj", "{D990C0C8-07AE-475B-A1EA-451E4348C184}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fotostatur.ImageAnalyzer", "Fotostatur\Fotostatur.ImageAnalyzer\Fotostatur.ImageAnalyzer.csproj", "{D990C0C8-07AE-475B-A1EA-451E4348C184}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
