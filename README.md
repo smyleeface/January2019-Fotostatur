@@ -50,10 +50,11 @@ The following tools and accounts are required to complete these instructions.
 
 1) Deploy the skeleton code from this repo. **NOTE: This is the command to deploy any future changes.**
     ```bash
-    dotnet lash deploy --tier Sandbox
+    dotnet lash deploy Fotostatur --tier Sandbox
     ```
 
     > See [Setup LambdaSharp CLI & Runtime](https://github.com/LambdaSharp/LambdaSharpTool/tree/master/Runtime#setup-lambdasharp-cli--runtime) for detailed instructions and more info about the LambdaSharpTool.
+    > Note: LambdaSharp Contributors need to unset the `LAMBDASHARP` environment variable if you want to use `dotnet lash`
 
 1) Find the `FotostaturPhotoBucket` bucket name in the CloudFormation outputs:
 
