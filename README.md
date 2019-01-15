@@ -48,7 +48,7 @@ The following tools and accounts are required to complete these instructions.
     dotnet lash init --tier Sandbox
     ```
 
-1) Deploy the skeleton code from this repo. **NOTE: This is the command to deploy any future changes.**
+1) From the root of the cloned repo, deploy the skeleton code. **NOTE: This is the command to deploy any future changes.**
     ```bash
     dotnet lash deploy Fotostatur --tier Sandbox
     ```
