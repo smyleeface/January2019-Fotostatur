@@ -42,8 +42,6 @@ namespace Fotostatur.ImageAnalyzer {
         private string _comparingImageBucket;
         private string _headshotFileName;
         private string _filename;
-        private string _tempResizedFilename;
-        private string _destinationBucket;
         private float _criteriaThreshold;
         private string _tempResizeFilename;
 
@@ -55,10 +53,10 @@ namespace Fotostatur.ImageAnalyzer {
             _s3Client = new AmazonS3Client();
             
             // social media keys
-            // _consumerKey = config.ReadText("TwitterConsumerKey");
-            // _consumerSecret = config.ReadText("TwitterConsumerSecret");
-            // _accessToken = config.ReadText("TwitterAccessToken");
-            // _accessTokenSecret = config.ReadText("TwitterAccessSecret");
+            _consumerKey = config.ReadText("TwitterConsumerKey");
+            _consumerSecret = config.ReadText("TwitterConsumerSecret");
+            _accessToken = config.ReadText("TwitterAccessToken");
+            _accessTokenSecret = config.ReadText("TwitterAccessSecret");
             
             // Headshot paths
             _headshotFileName = config.ReadText("HeadshotFileName");
@@ -70,7 +68,6 @@ namespace Fotostatur.ImageAnalyzer {
 
         public override async Task<FunctionResponse> ProcessMessageAsync(S3Event s3Event, ILambdaContext context) {
             LogInfo(JsonConvert.SerializeObject(s3Event));
-            _tempResizedFilename = "/tmp/resized.jpg";
             _foundLabels = new List<FoundCriterias>();
             _totalScore = 0;
             _criteriaFiltered = 0;
@@ -104,10 +101,10 @@ namespace Fotostatur.ImageAnalyzer {
             
             // Post if within threshold
             if (finalScore > _criteriaThreshold) {
-                // await DownloadS3Image();
-                // ResizeImage();
-                // UploadImage();
-                // TwitterUpload();
+                await DownloadS3Image();
+                ResizeImage();
+                UploadImage();
+                TwitterUpload();
             }
             return new FunctionResponse();
         }
@@ -128,13 +125,37 @@ namespace Fotostatur.ImageAnalyzer {
         public async Task<DetectLabelsResponse> DetectLabels() {
             
             // LEVEL 1: detect labels from the picture
-            return new DetectLabelsResponse();
+            var request = new DetectLabelsRequest {
+                Image = new Image {
+                    S3Object = new S3Object {
+                        Bucket = _sourceBucket,
+                        Name = _sourceKey
+                    }
+                }
+            };
+            var detectLabelsResponse = await _rekognitionClient.DetectLabelsAsync(request);
+            LogInfo(JsonConvert.SerializeObject(detectLabelsResponse));
+            return detectLabelsResponse;
         }
 
         public void ScoreLabels(DetectLabelsResponse detectLabelsResponse) {
             LogInfo(JsonConvert.SerializeObject(detectLabelsResponse));
             
             // LEVEL 1: determine if photo meets your label criteria
+            var labelCriteria = new List<string> {
+                "dog",
+                "plant",
+                "person"
+            };
+            foreach (var detectedLabel in detectLabelsResponse.Labels) {
+                if (!labelCriteria.Contains(detectedLabel.Name)) {
+                    LogInfo($"{detectedLabel.Name}: Invalid");
+                }
+                else {
+                    LogInfo($"{detectedLabel.Name}: Valid");
+                    AddTotals(detectedLabel.Name, detectedLabel.Confidence);
+                }
+            }
         }
         
         // ########################################
@@ -143,13 +164,30 @@ namespace Fotostatur.ImageAnalyzer {
         private async Task<DetectTextResponse> DetectText() {
             
             // LEVEL 2: detect text in the picture
-            return new DetectTextResponse();
+            var request = new DetectTextRequest {
+                Image = new Image {
+                    S3Object = new S3Object {
+                        Bucket = _sourceBucket,
+                        Name = _sourceKey
+                    }
+                }
+            };
+            var response = await _rekognitionClient.DetectTextAsync(request);
+            return response;
+
         }
 
         private void ScoreText(DetectTextResponse detectTextResponse) {
             LogInfo(JsonConvert.SerializeObject(detectTextResponse));
             
             // LEVEL 2: make a criteria around detecting text in an image
+            if (detectTextResponse.TextDetections.Count > 0) {
+                LogInfo($"Detected text: valid");
+                AddTotals("detected text", 1);
+            }
+            else {
+                LogInfo($"Detected text: invalid");
+            }
         }
         
         // ########################################
@@ -158,13 +196,30 @@ namespace Fotostatur.ImageAnalyzer {
         private async Task<CompareFacesResponse> CompareFaces() {
             
             // LEVEL 3: compare face in the picture
-            return new CompareFacesResponse();
+            var request = new CompareFacesRequest {
+                SourceImage = new Image {
+                    S3Object = new S3Object {
+                        Bucket = _sourceBucket,
+                        Name = _sourceKey
+                    }
+                },
+                TargetImage = new Image {
+                    S3Object = new S3Object {
+                        Bucket = _comparingImageBucket,
+                        Name = _comparingImageKey
+                    }
+                }
+            };
+            var response = await _rekognitionClient.CompareFacesAsync(request);
+            return response;
         }
 
         private void ScoreCompare(CompareFacesResponse compareFacesResponse) {
             LogInfo(JsonConvert.SerializeObject(compareFacesResponse));
             
             // LEVEL 3: make a criteria around comparing faces
+            LogInfo($"Compared face points: {compareFacesResponse.FaceMatches.First().Similarity}");
+            AddTotals("compared faces", compareFacesResponse.FaceMatches.First().Similarity);
         }
 
         // ########################################
@@ -173,7 +228,18 @@ namespace Fotostatur.ImageAnalyzer {
         public async Task<DetectFacesResponse> DetectFaces() {
             
             // LEVEL 4: detect faces in the picture
-            return new DetectFacesResponse();
+            var request = new DetectFacesRequest {
+                Image = new Image {
+                    S3Object = new S3Object {
+                        Bucket = _sourceBucket,
+                        Name = _sourceKey
+                    }
+                },
+                Attributes = new List<string>{"ALL"}
+            };
+            var response = await _rekognitionClient.DetectFacesAsync(request);
+            LogInfo(JsonConvert.SerializeObject(response));
+            return response;
         }
 
         public void ScoreFaces(DetectFacesResponse detectFactResponse) {
@@ -181,6 +247,35 @@ namespace Fotostatur.ImageAnalyzer {
 
             // LEVEL 4: choose one or more categories to build criteria from
             // ageRange, beard, boundingBox, eyeglasses, eyesOpen, gender, mouthOpen, mustache, pose, quality, smile, sunglasses
+            var detail = detectFactResponse.FaceDetails.First();
+            if (38 > detail.AgeRange.Low && 38 < detail.AgeRange.High) {
+                var middleAgeRange = detail.AgeRange.High - (detail.AgeRange.High - detail.AgeRange.Low);
+                LogInfo($"Age Range {middleAgeRange}: valid");
+                AddTotals("age range", 1);
+            }
+            else {
+                var middleAgeRange = detail.AgeRange.High - detail.AgeRange.Low;
+                LogInfo($"Age Range {middleAgeRange}: invalid");
+            }
+            if (!detail.Eyeglasses.Value) {
+                LogInfo($"No Eyeglasses: valid");
+                AddTotals("eyeglasses", detail.Eyeglasses.Confidence);
+            }
+            else {
+                LogInfo($"No Eyeglasses: invalid");
+            }
+            // var ageRange = detail.AgeRange;
+            // var beard = detail.Beard;
+            // var boundingBox = detail.BoundingBox;
+            // var eyeglasses = detail.Eyeglasses;
+            // var eyesOpen = detail.EyesOpen;
+            // var gender = detail.Gender;
+            // var mouthOpen = detail.MouthOpen;
+            // var mustache = detail.Mustache;
+            // var pose = detail.Pose;
+            // var quality = detail.Quality;
+            // var smile = detail.Smile;
+            // var sunglasses = detail.Sunglasses;
         }
 
         // ########################################
@@ -190,12 +285,26 @@ namespace Fotostatur.ImageAnalyzer {
             LogInfo("Downloading image");
             
             // BOSS: Download and save image locally from S3
+            var utility = new TransferUtility(_s3Client);
+            var request = new TransferUtilityDownloadRequest {
+                Key = _sourceKey,
+                BucketName = _sourceBucket,
+                FilePath = $"/tmp/{_filename}"
+            };
+            utility.DownloadAsync(request).Wait();
         }
         
         private void ResizeImage() {
             LogInfo("Resize image");
             
             // BOSS: load the image and resize (https://github.com/SixLabors/ImageSharp#api)
+            using (Image<Rgba32> image = SixLabors.ImageSharp.Image.Load($"/tmp/{_filename}")) {
+                LogInfo("Resize image");
+                image.Mutate(x => x
+                    .Resize(400, 400)
+                    .Grayscale());
+                image.Save(_tempResizeFilename);
+            }
         }
 
         private void TwitterUpload() {
@@ -203,7 +312,7 @@ namespace Fotostatur.ImageAnalyzer {
             // BOSS: upload to twitter
             try {
                 LogInfo("Twitter image");
-                var bytes = File.ReadAllBytesAsync("LOCAL FILE PATH").Result;
+                var bytes = File.ReadAllBytesAsync(_tempResizeFilename).Result;
                 Auth.SetUserCredentials(_consumerKey, _consumerSecret, _accessToken, _accessTokenSecret);
                 Account.UpdateProfileImage(bytes);
             }
@@ -216,6 +325,14 @@ namespace Fotostatur.ImageAnalyzer {
             LogInfo("Upload image");
             
             // BOSS (optional): upload processed file to S3
+            var utility = new TransferUtility(_s3Client);
+            var request = new TransferUtilityUploadRequest {
+                Key = $"resized/{_filename}",
+                BucketName = _sourceBucket,
+                FilePath = _tempResizeFilename,
+                ContentType = "image/jpeg"
+            };
+            utility.UploadAsync(request).Wait();
         }
         
         // ########################################
