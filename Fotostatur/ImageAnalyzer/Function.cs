@@ -45,6 +45,7 @@ namespace Fotostatur.ImageAnalyzer {
         private string _tempResizedFilename;
         private string _destinationBucket;
         private float _criteriaThreshold;
+        private string _tempResizeFilename;
 
         //--- Methods ---
         public override Task InitializeAsync(LambdaConfig config) {
@@ -118,6 +119,7 @@ namespace Fotostatur.ImageAnalyzer {
             _sourceBucket = s3Event.Records.First().S3.Bucket.Name;
             _sourceKey = s3Event.Records.First().S3.Object.Key;
             _filename = _sourceKey.Split("/").LastOrDefault();
+            _tempResizeFilename = $"/tmp/resize_{_filename}";
         }
         
         // ########################################
