@@ -162,6 +162,7 @@ namespace Fotostatur.ImageAnalyzer {
         }
 
         private void ScoreCompare(CompareFacesResponse compareFacesResponse) {
+            LogInfo(JsonConvert.SerializeObject(compareFacesResponse));
             
             // LEVEL 3: make a criteria around comparing faces
         }
@@ -175,7 +176,8 @@ namespace Fotostatur.ImageAnalyzer {
             return new DetectFacesResponse();
         }
 
-        public void ScoreFaces(DetectFacesResponse response) {
+        public void ScoreFaces(DetectFacesResponse detectFactResponse) {
+            LogInfo(JsonConvert.SerializeObject(detectFactResponse));
 
             // LEVEL 4: choose one or more categories to build criteria from
             // ageRange, beard, boundingBox, eyeglasses, eyesOpen, gender, mouthOpen, mustache, pose, quality, smile, sunglasses
@@ -235,6 +237,7 @@ namespace Fotostatur.ImageAnalyzer {
         }
         
         private float CalculateFinalScore() {
+            LogInfo($"Score Breakdown: {JsonConvert.SerializeObject(_foundLabels)}");
             
             // total confidence divided by the number of criteria filtered
             return _totalScore / _criteriaFiltered;
