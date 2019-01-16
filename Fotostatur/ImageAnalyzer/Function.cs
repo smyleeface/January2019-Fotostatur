@@ -42,8 +42,6 @@ namespace Fotostatur.ImageAnalyzer {
         private string _comparingImageBucket;
         private string _headshotFileName;
         private string _filename;
-        private string _tempResizedFilename;
-        private string _destinationBucket;
         private float _criteriaThreshold;
         private string _tempResizeFilename;
 
@@ -70,7 +68,6 @@ namespace Fotostatur.ImageAnalyzer {
 
         public override async Task<FunctionResponse> ProcessMessageAsync(S3Event s3Event, ILambdaContext context) {
             LogInfo(JsonConvert.SerializeObject(s3Event));
-            _tempResizedFilename = "/tmp/resized.jpg";
             _foundLabels = new List<FoundCriterias>();
             _totalScore = 0;
             _criteriaFiltered = 0;
