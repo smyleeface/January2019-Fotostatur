@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace Fotostatur.Fotostatur.ImageAnalyzer {
+namespace Fotostatur.ImageAnalyzer {
     public class FoundCriterias {
         
         [JsonProperty("name")]

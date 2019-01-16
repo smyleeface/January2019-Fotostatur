@@ -23,9 +23,7 @@ The following tools and accounts are required to complete these instructions.
 <details>
 <summary>Setup LambdaSharpTool and Deploy Skeleton Code</summary>
 
-1) Clone the Repo and go to the `Fotostatur` directory.
-
-1) Install/update the λ# tool.
+1) From any directory, install/update the λ# tool.
 
     ```bash
     dotnet tool install -g MindTouch.LambdaSharp.Tool --version 0.4.0.4
@@ -48,8 +46,11 @@ The following tools and accounts are required to complete these instructions.
     dotnet lash init --tier Sandbox
     ```
 
+1) Clone this Repo.
+
 1) From the root of the cloned repo, deploy the skeleton code. **NOTE: This is the command to deploy any future changes.**
     ```bash
+    cd Automated-Image-Workflow-Challenge/
     dotnet lash deploy Fotostatur --tier Sandbox
     ```
 
@@ -60,7 +61,7 @@ The following tools and accounts are required to complete these instructions.
 
     > Hint: From the AWS console navigate to `Cloudformation` > `Sandbox-Fotostatur` > `Resources`
 
-1) Test deployment by choosing an image to upload.
+1) Test deployment by taking a picture or choosing an image to upload.
 
     In the command below replace `SOURCE_IMAGE.JPG` and `FOTO_STATUR_PHOTOBUCKET` for their respective names.
     
@@ -116,16 +117,16 @@ Where `criteria label` is any string to identify the criteria, and the `float` w
 <details>
 <summary>Detect Objects and Scenes</summary>
 
-In `Fotostatur.ImageAnalyzer/Functions.cs` edit the `DetectLabels` and `ScoreLabels` methods.
+In `Fotostatur/ImageAnalyzer/Functions.cs` edit the `DetectLabels` and `ScoreLabels` methods.
 
 [DetectLabelsAsync Method](https://docs.aws.amazon.com/sdkfornet/v3/apidocs/items/Rekognition/MRekognitionDetectLabelsAsyncDetectLabelsRequestCancellationToken.html)
 
 1) Detect the labels from the image uploaded.
 1) Score the results from detect labels using the `AddTotals` helper function to keep a running total.
 
-Test your code by using the CLI commands above to deploy, upload and remove images from S3.
+_Test your code by using the CLI commands above to deploy, upload and remove images from S3._
 
-Use CloudWatch to see the final score change based on criteria added.    
+_Use CloudWatch to see the final score change based on criteria added._    
 
 </details>
 
@@ -134,16 +135,16 @@ Use CloudWatch to see the final score change based on criteria added.
 <details>
 <summary>Detect Text</summary>
 
-In `Fotostatur.ImageAnalyzer/Functions.cs` edit the `DetectText` and `ScoreText` methods.
+In `Fotostatur/ImageAnalyzer/Functions.cs` edit the `DetectText` and `ScoreText` methods.
 
 [DetectTextAsync Method](https://docs.aws.amazon.com/sdkfornet/v3/apidocs/items/Rekognition/MRekognitionDetectTextAsyncDetectTextRequestCancellationToken.html)
 
 1) Detect any text from the image uploaded.
 1) Score the results from detect text using the `AddTotals` helper function to keep a running total.
 
-Test your code by using the CLI commands above to deploy, upload and remove images from S3.
+_Test your code by using the CLI commands above to deploy, upload and remove images from S3._
 
-Use CloudWatch to see the final score change based on criteria added.
+_Use CloudWatch to see the final score change based on criteria added._
 
 </details>
 
@@ -152,19 +153,19 @@ Use CloudWatch to see the final score change based on criteria added.
 <details>
 <summary>Compare Faces</summary>
 
-In `Fotostatur.ImageAnalyzer/Functions.cs` edit the `CompareFaces` and `ScoreCompare` methods.
+In `Fotostatur/ImageAnalyzer/Functions.cs` edit the `CompareFaces` and `ScoreCompare` methods.
 
 [CompareFacesAsync Method](https://docs.aws.amazon.com/sdkfornet/v3/apidocs/items/Rekognition/MRekognitionCompareFacesAsyncCompareFacesRequestCancellationToken.html)
 
 1) Add a "headshot" of someone to the `Fotostatur/headshots` directory.
 1) In `Fotostatur/Module.yml`, find `HeadshotFileName` and replace the `TODO` with the filename (include extension) of the headshot.
-    > Note: These variables can be accessed from: `_headshotFileName`, `_comparingImageBucket`, and `_comparingImageKey`. See `InitializeAsync` in `Fotostatur.ImageAnalyzer/Functions.cs`.
+    > Note: These variables can be accessed from: `_headshotFileName`, `_comparingImageBucket`, and `_comparingImageKey`. See `InitializeAsync` in `Fotostatur/ImageAnalyzer/Functions.cs`.
 1) Compare the headshot and the image uploaded.
 1) Score the results from comparison using the `AddTotals` helper function to keep a running total.
 
-Test your code by using the CLI commands above to deploy, upload and remove images from S3.
+_Test your code by using the CLI commands above to deploy, upload and remove images from S3._
 
-Use CloudWatch to see the final score change based on criteria added.
+_Use CloudWatch to see the final score change based on criteria added._
 
 </details>
 
@@ -173,7 +174,7 @@ Use CloudWatch to see the final score change based on criteria added.
 <details>
 <summary>Detect Faces</summary>
 
-In `Fotostatur.ImageAnalyzer/Functions.cs` edit the `DetectFaces` and `ScoreFaces` methods.
+In `Fotostatur/ImageAnalyzer/Functions.cs` edit the `DetectFaces` and `ScoreFaces` methods.
 
 [DetectFacesAsync Method](https://docs.aws.amazon.com/sdkfornet/v3/apidocs/items/Rekognition/MRekognitionDetectFacesAsyncDetectFacesRequestCancellationToken.html)
 [DetectFacesAPI](https://docs.aws.amazon.com/rekognition/latest/dg/API_DetectFaces.html)
@@ -182,9 +183,9 @@ In `Fotostatur.ImageAnalyzer/Functions.cs` edit the `DetectFaces` and `ScoreFace
 1) See `ScoreFaces` for a commented list of objects to generate criteria with. Use at least one.
 1) Score the results from generated criteria using the `AddTotals` helper function to keep a running total.
 
-Test your code by using the CLI commands above to deploy, upload and remove images from S3.
+_Test your code by using the CLI commands above to deploy, upload and remove images from S3._
 
-Use CloudWatch to see the final score change based on criteria added.
+_Use CloudWatch to see the final score change based on criteria added._
 
 </details>
 
@@ -201,33 +202,39 @@ To obtain Twitter keys, use the steps provided at the presentation. To create to
     lash encrypt SECRET
     ```
 
-    You will need to uncomment the `TwitterConsumerKey`, `TwitterConsumerSecret`, `TwitterAccessToken`, `TwitterAccessSecret` in `Fotostatur/Module.yml` and add each encrypted value to their respective location. 
+1) In `Fotostatur/Module.yml`, uncomment the `TwitterConsumerKey`, `TwitterConsumerSecret`, `TwitterAccessToken`, `TwitterAccessSecret` and add each encrypted value to their respective location. 
 
-1) In `Fotostatur.ImageAnalyzer/Functions.cs` edit the `DownloadS3Image` method and uncomment `await DownloadS3Image();` in method `ProcessMessageAsync`.
-    
-    `DownloadS3Image` should download and save the image locally from S3.
-    
-    > See [TransferUtility](https://docs.aws.amazon.com/sdkfornet/v3/apidocs/items/S3/TTransferUtility.html) for easy download from S3 to local file.
-    
-1) In `Fotostatur.ImageAnalyzer/Functions.cs` edit the `ResizeImage` method and uncomment `ResizeImage();` in method `ProcessMessageAsync`.
+1) In `Fotostatur/ImageAnalyzer/Functions.cs`:
 
-    `ResizeImage` should resize the image downloaded and save locally to another location.
+    1) In method `ProcessMessageAsync`, uncomment `await DownloadS3Image();` 
+    1) Edit the `DownloadS3Image` method to save the image locally from S3
     
+1) In `Fotostatur/ImageAnalyzer/Functions.cs`:
+
+    1) In method `ProcessMessageAsync`, uncomment `ResizeImage();` 
+    1) Edit the `ResizeImage` method to process the image 
+
     > See [ImageSharp Resize Example](https://github.com/SixLabors/ImageSharp#api)
     
-1) In `Fotostatur.ImageAnalyzer/Functions.cs` edit the `TwitterUpload` method to change the `LOCAL FILE PATH` and uncomment `TwitterUpload();` in method `ProcessMessageAsync`.
+1) In `Fotostatur/ImageAnalyzer/Functions.cs`:
 
-1) In `Fotostatur.ImageAnalyzer/Functions.cs` edit the `_criteriaThreshold` from `50` to desired number in method `InitializeAsync`.
+    1) In method `ProcessMessageAsync`, uncomment `TwitterUpload();`
+    1) Edit the `TwitterUpload` method to change the `LOCAL FILE PATH`
 
-1) (Optional) In `Fotostatur.ImageAnalyzer/Functions.cs` edit the `UploadImage` method and uncomment `UploadImage();` in method `ProcessMessageAsync`.
+1) In `Fotostatur/ImageAnalyzer/Functions.cs` in method `ProcessMessageAsync`:
 
-    > See [TransferUtility](https://docs.aws.amazon.com/sdkfornet/v3/apidocs/items/S3/TTransferUtility.html) for easy upload to S3 from local file.
+    1) edit the `_criteriaThreshold` from `50` to desired number.
 
-Test your code by using the CLI commands above to deploy, upload and remove images from S3.
+1) (Optional) In `Fotostatur/ImageAnalyzer/Functions.cs`:
 
-Use CloudWatch to see the final score change based on criteria added.
+    1) In method `ProcessMessageAsync`, uncomment `UploadImage();`
+    1) Edit the `UploadImage` method to have a copy of the image uploaded
 
-Check Twitter for the new profile picture.
+_Test your code by using the CLI commands above to deploy, upload and remove images from S3._
+
+_Use CloudWatch to see the final score change based on criteria added._
+
+_Check Twitter for the new profile picture._
 
 </details>
 

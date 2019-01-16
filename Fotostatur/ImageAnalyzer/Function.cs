@@ -22,7 +22,7 @@ using TweetinviModels = Tweetinvi.Models;
 // Assembly attribute to enable the Lambda function's JSON input to be converted into a .NET class.
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
 
-namespace Fotostatur.Fotostatur.ImageAnalyzer {
+namespace Fotostatur.ImageAnalyzer {
 
     public class Function : ALambdaFunction<S3Event, FunctionResponse> {
 
@@ -49,12 +49,6 @@ namespace Fotostatur.Fotostatur.ImageAnalyzer {
         //--- Methods ---
         public override Task InitializeAsync(LambdaConfig config) {
             
-            // Initializing
-            _totalScore = 0;
-            _criteriaFiltered = 0;
-            _tempResizedFilename = "/tmp/resized.jpg";
-            _criteriaThreshold = 50;
-            
             // Clients
             _rekognitionClient = new AmazonRekognitionClient();
             _s3Client = new AmazonS3Client();
@@ -75,7 +69,11 @@ namespace Fotostatur.Fotostatur.ImageAnalyzer {
 
         public override async Task<FunctionResponse> ProcessMessageAsync(S3Event s3Event, ILambdaContext context) {
             LogInfo(JsonConvert.SerializeObject(s3Event));
+            _tempResizedFilename = "/tmp/resized.jpg";
             _foundLabels = new List<FoundCriterias>();
+            _totalScore = 0;
+            _criteriaFiltered = 0;
+            _criteriaThreshold = 50;
             
             // Get the Bucket name and key from the event
             GetEventInfo(s3Event);
@@ -113,92 +111,112 @@ namespace Fotostatur.Fotostatur.ImageAnalyzer {
             return new FunctionResponse();
         }
 
-        // ####################
+        // ########################################
         // ##### S3 EVENT INFO
-        // ####################
+        // ########################################
         private void GetEventInfo(S3Event s3Event) {
             _sourceBucket = s3Event.Records.First().S3.Bucket.Name;
             _sourceKey = s3Event.Records.First().S3.Object.Key;
             _filename = _sourceKey.Split("/").LastOrDefault();
         }
         
-        // ####################
-        // ##### DETECT LABELS
-        // ####################
+        // ########################################
+        // ##### DETECT LABELS - LEVEL 1
+        // ########################################
         public async Task<DetectLabelsResponse> DetectLabels() {
             
-            // TODO: detect labels from the picture
+            // LEVEL 1: detect labels from the picture
             return new DetectLabelsResponse();
         }
 
         public void ScoreLabels(DetectLabelsResponse detectLabelsResponse) {
             LogInfo(JsonConvert.SerializeObject(detectLabelsResponse));
             
-            // TODO: determine if photo meets your label criteria
-            // AddTotals("criteria label", (float) 0.1234);
+            // LEVEL 1: determine if photo meets your label criteria
         }
         
-        // ####################
-        // ##### DETECT TEXT
-        // ####################
+        // ########################################
+        // ### DETECT TEXT
+        // ########################################
         private async Task<DetectTextResponse> DetectText() {
             
-            // TODO: detect text in the picture
+            // LEVEL 2: detect text in the picture
             return new DetectTextResponse();
         }
 
         private void ScoreText(DetectTextResponse detectTextResponse) {
             LogInfo(JsonConvert.SerializeObject(detectTextResponse));
             
-            // TODO: make a criteria around detecting text in an image
-            // AddTotals("criteria detect text", (float) 0.1234);
+            // LEVEL 2: make a criteria around detecting text in an image
         }
         
-        // ####################
-        // ##### Face Compare
-        // ####################
+        // ########################################
+        // ### Face Compare
+        // ########################################
         private async Task<CompareFacesResponse> CompareFaces() {
             
-            // TODO: compare face in the picture
+            // LEVEL 3: compare face in the picture
             return new CompareFacesResponse();
         }
 
         private void ScoreCompare(CompareFacesResponse compareFacesResponse) {
             
-            // TODO: make a criteria around comparing faces
-            // AddTotals("criteria compare face", (float) 0.1234);
+            // LEVEL 3: make a criteria around comparing faces
         }
 
-        // ####################
-        // ##### DETECT FACES
-        // ####################
+        // ########################################
+        // ### DETECT FACES
+        // ########################################
         public async Task<DetectFacesResponse> DetectFaces() {
             
-            // TODO: detect faces in the picture
+            // LEVEL 4: detect faces in the picture
             return new DetectFacesResponse();
         }
 
         public void ScoreFaces(DetectFacesResponse response) {
-            
-            // TODO: choose one or more categories to build criteria from
-//            var detail = response.FaceDetails.First();
-//            var ageRange = detail.AgeRange;
-//            var beard = detail.Beard;
-//            var boundingBox = detail.BoundingBox;
-//            var eyeglasses = detail.Eyeglasses;
-//            var eyesOpen = detail.EyesOpen;
-//            var gender = detail.Gender;
-//            var mouthOpen = detail.MouthOpen;
-//            var mustache = detail.Mustache;
-//            var pose = detail.Pose;
-//            var quality = detail.Quality;
-//            var smile = detail.Smile;
-//            var sunglasses = detail.Sunglasses;
+
+            // LEVEL 4: choose one or more categories to build criteria from
+            // ageRange, beard, boundingBox, eyeglasses, eyesOpen, gender, mouthOpen, mustache, pose, quality, smile, sunglasses
         }
 
-        // ####################
-        // ##### CALCULATIONS
-        // ####################
+        // ########################################
+        // ### PROCESS IMAGE FOR UPLOAD
+        // ########################################
+        private async Task DownloadS3Image() {
+            LogInfo("Downloading image");
+            
+            // BOSS: Download and save image locally from S3
+        }
+        
+        private void ResizeImage() {
+            LogInfo("Resize image");
+            
+            // BOSS: load the image and resize (https://github.com/SixLabors/ImageSharp#api)
+        }
+
+        private void TwitterUpload() {
+            
+            // BOSS: upload to twitter
+            try {
+                LogInfo("Twitter image");
+                var bytes = File.ReadAllBytesAsync("LOCAL FILE PATH").Result;
+                Auth.SetUserCredentials(_consumerKey, _consumerSecret, _accessToken, _accessTokenSecret);
+                Account.UpdateProfileImage(bytes);
+            }
+            catch (Exception e) {
+                LogError(e);
+            }
+        }
+        
+        private void UploadImage() {
+            LogInfo("Upload image");
+            
+            // BOSS (optional): upload processed file to S3
+        }
+        
+        // ########################################
+        // ### CALCULATIONS -- OPTIONAL TO USE
+        // ########################################
         public void AddTotals(string name, float points) {
             
             // track number of criterias being applied to this image
@@ -219,42 +237,6 @@ namespace Fotostatur.Fotostatur.ImageAnalyzer {
             // total confidence divided by the number of criteria filtered
             return _totalScore / _criteriaFiltered;
         }
-        
-        // ########################################
-        // ##### PROCESS IMAGE FOR UPLOAD
-        // ########################################
-        private async Task DownloadS3Image() {
-            LogInfo("Downloading image");
-            
-            // TODO: Download and save image locally from S3
-        }
-        
-        private void ResizeImage() {
-            LogInfo("Resize image");
-            
-            // TODO: load the image and resize (https://github.com/SixLabors/ImageSharp#api)
-        }
-
-        private void UploadImage() {
-            LogInfo("Upload image");
-            
-            // TODO: https://docs.aws.amazon.com/sdkfornet/v3/apidocs/items/S3/TTransferUtility.html
-        }
-        
-        private void TwitterUpload() {
-            
-            // TODO: update local file path
-            try {
-                LogInfo("Twitter image");
-                var bytes = File.ReadAllBytesAsync("LOCAL FILE PATH").Result;
-                Auth.SetUserCredentials(_consumerKey, _consumerSecret, _accessToken, _accessTokenSecret);
-                Account.UpdateProfileImage(bytes);
-            }
-            catch (Exception e) {
-                LogError(e);
-            }
-        }
-        
     }
     
     public class FunctionResponse {
