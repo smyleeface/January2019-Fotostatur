@@ -4,29 +4,29 @@ Description: Photo/image rating and profile posting app
 
 Inputs:
   
-#  - Parameter: TwitterConsumerKey
-#    Scope: ImageAnalyzer
-#    Default: TODO
-#    Type: Secret
-#    
-#  - Parameter: TwitterConsumerSecret
-#    Scope: ImageAnalyzer
-#    Default: TODO
-#    Type: Secret
-#    
-#  - Parameter: TwitterAccessToken
-#    Scope: ImageAnalyzer
-#    Default: TODO
-#    Type: Secret
-#    
-#  - Parameter: TwitterAccessSecret
-#    Scope: ImageAnalyzer
-#    Default: TODO
-#    Type: Secret
+  - Parameter: TwitterConsumerKey
+    Scope: ImageAnalyzer
+    Default: AQICAHhAYp3MoGsmyw6PKfGJGx5gZ7MuLIwCE75+PRPZdhkQVwEDhEqJzlaQGwZUWZerfCIFAAAAdzB1BgkqhkiG9w0BBwagaDBmAgEAMGEGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQM+/fnumFUW9H8JJi6AgEQgDTOukfdPD57H651Yy55uZjq96Be8z7670X3BNDME27LExz6j9DREsd2M9l6JEKsCZ9V86W2
+    Type: Secret
+  
+  - Parameter: TwitterConsumerSecret
+    Scope: ImageAnalyzer
+    Default: AQICAHhAYp3MoGsmyw6PKfGJGx5gZ7MuLIwCE75+PRPZdhkQVwH0GD3W4G2drXZoBWQlT2GfAAAAkjCBjwYJKoZIhvcNAQcGoIGBMH8CAQAwegYJKoZIhvcNAQcBMB4GCWCGSAFlAwQBLjARBAxC+5xsx0vgvLaLnFoCARCATd+svlQmfd7dSgrHstvtHtX9TXPsAUJ/PaadrGDqkwlpN3IAc13QwLB0//CRK1ZGUxMXT4gbzMQn4fcST8fyIEymBDMn5+80+Ssnqb7Q
+    Type: Secret
+  
+  - Parameter: TwitterAccessToken
+    Scope: ImageAnalyzer
+    Default: AQICAHhAYp3MoGsmyw6PKfGJGx5gZ7MuLIwCE75+PRPZdhkQVwFtjA2DokGDDtacZgupf1TMAAAAkjCBjwYJKoZIhvcNAQcGoIGBMH8CAQAwegYJKoZIhvcNAQcBMB4GCWCGSAFlAwQBLjARBAxdmxj1fsNyy1u9SogCARCATR/A1YZdcGGcqNhmQjcAepHDmDXeiSFwyzgXfukk82kugNPjn1qxg5tsx0JBYWzpcXT2nIc26ExcQH8CZEa0q/kq5gro9AY8papA+Ggq
+    Type: Secret
+
+  - Parameter: TwitterAccessSecret
+    Scope: ImageAnalyzer
+    Default: AQICAHhAYp3MoGsmyw6PKfGJGx5gZ7MuLIwCE75+PRPZdhkQVwGpKGumzHpgp/jyYFML/XgFAAAAjDCBiQYJKoZIhvcNAQcGoHwwegIBADB1BgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDAqAohvOzFnhBsU9VgIBEIBIcuzuOpYlghd2fu5qiNs0LV6arJLrFve38teZna7T5itvIWMziIzXyK8kAdth5a7m8CPmRYGbSAqZ4+pOfsgGXaXtqqwXhnk2
+    Type: Secret
     
   - Parameter: HeadshotFileName
     Scope: ImageAnalyzer
-    Default: TODO
+    Default: pattysrekogition.jpg
     Type: String
 
 Variables:
