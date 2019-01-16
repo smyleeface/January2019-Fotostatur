@@ -181,13 +181,15 @@ namespace Fotostatur.ImageAnalyzer {
             LogInfo(JsonConvert.SerializeObject(detectTextResponse));
             
             // LEVEL 2: make a criteria around detecting text in an image
+            var totalPoints = 0; 
             if (detectTextResponse.TextDetections.Count > 0) {
-                LogInfo($"Detected text: valid");
-                AddTotals("detected text", 1);
+                LogInfo($"Detected text: points awarded");
+                totalPoints = 100;
             }
             else {
-                LogInfo($"Detected text: invalid");
+                LogInfo($"Detected text: no points awarded");
             }
+            AddTotals("detected text", totalPoints);
         }
         
         // ########################################
