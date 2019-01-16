@@ -251,7 +251,7 @@ namespace Fotostatur.ImageAnalyzer {
             if (38 > detail.AgeRange.Low && 38 < detail.AgeRange.High) {
                 var middleAgeRange = detail.AgeRange.High - (detail.AgeRange.High - detail.AgeRange.Low);
                 LogInfo($"Age Range {middleAgeRange}: valid");
-                AddTotals("age range", 1);
+                AddTotals("age range", 100);
             }
             else {
                 var middleAgeRange = detail.AgeRange.High - detail.AgeRange.Low;
