@@ -54,11 +54,11 @@ namespace Fotostatur.ImageAnalyzer {
             _rekognitionClient = new AmazonRekognitionClient();
             _s3Client = new AmazonS3Client();
             
-            // Environment Variables
-//            _consumerKey = config.ReadText("TwitterConsumerKey");
-//            _consumerSecret = config.ReadText("TwitterConsumerSecret");
-//            _accessToken = config.ReadText("TwitterAccessToken");
-//            _accessTokenSecret = config.ReadText("TwitterAccessSecret");
+            // social media keys
+            // _consumerKey = config.ReadText("TwitterConsumerKey");
+            // _consumerSecret = config.ReadText("TwitterConsumerSecret");
+            // _accessToken = config.ReadText("TwitterAccessToken");
+            // _accessTokenSecret = config.ReadText("TwitterAccessSecret");
             
             // Headshot paths
             _headshotFileName = config.ReadText("HeadshotFileName");
@@ -138,7 +138,7 @@ namespace Fotostatur.ImageAnalyzer {
         }
         
         // ########################################
-        // ### DETECT TEXT
+        // ### DETECT TEXT - LEVEL 2
         // ########################################
         private async Task<DetectTextResponse> DetectText() {
             
@@ -153,7 +153,7 @@ namespace Fotostatur.ImageAnalyzer {
         }
         
         // ########################################
-        // ### Face Compare
+        // ### Face Compare - LEVEL 3
         // ########################################
         private async Task<CompareFacesResponse> CompareFaces() {
             
@@ -168,7 +168,7 @@ namespace Fotostatur.ImageAnalyzer {
         }
 
         // ########################################
-        // ### DETECT FACES
+        // ### DETECT FACES - LEVEL 4
         // ########################################
         public async Task<DetectFacesResponse> DetectFaces() {
             
@@ -184,7 +184,7 @@ namespace Fotostatur.ImageAnalyzer {
         }
 
         // ########################################
-        // ### PROCESS IMAGE FOR UPLOAD
+        // ### PROCESS IMAGE FOR UPLOAD - BOSS
         // ########################################
         private async Task DownloadS3Image() {
             LogInfo("Downloading image");

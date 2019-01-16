@@ -204,31 +204,25 @@ To obtain Twitter keys, use the steps provided at the presentation. To create to
 
 1) In `Fotostatur/Module.yml`, uncomment the `TwitterConsumerKey`, `TwitterConsumerSecret`, `TwitterAccessToken`, `TwitterAccessSecret` and add each encrypted value to their respective location. 
 
-1) In `Fotostatur/ImageAnalyzer/Functions.cs`:
 
-    1) In method `ProcessMessageAsync`, uncomment `await DownloadS3Image();` 
-    1) Edit the `DownloadS3Image` method to save the image locally from S3
+In `Fotostatur/ImageAnalyzer/Functions.cs` do the following
+
+1) In method `InitializeAsync`, uncomment `_consumerKey`, `_consumerSecret`, `_accessToken`, `_accessTokenSecret`
+
+1) In method `ProcessMessageAsync`, uncomment `await DownloadS3Image();` 
+1) In method `DownloadS3Image`, save the image locally from S3
     
-1) In `Fotostatur/ImageAnalyzer/Functions.cs`:
-
-    1) In method `ProcessMessageAsync`, uncomment `ResizeImage();` 
-    1) Edit the `ResizeImage` method to process the image 
-
+1) In method `ProcessMessageAsync`, uncomment `ResizeImage();` 
+1) In method `ResizeImage`, process the image 
     > See [ImageSharp Resize Example](https://github.com/SixLabors/ImageSharp#api)
     
-1) In `Fotostatur/ImageAnalyzer/Functions.cs`:
+1) In method `ProcessMessageAsync`, uncomment `TwitterUpload();`
+1) In method `TwitterUpload`, change the `LOCAL FILE PATH`
 
-    1) In method `ProcessMessageAsync`, uncomment `TwitterUpload();`
-    1) Edit the `TwitterUpload` method to change the `LOCAL FILE PATH`
+1) In method `ProcessMessageAsync`, edit the `_criteriaThreshold` from `50` to desired number.
 
-1) In `Fotostatur/ImageAnalyzer/Functions.cs` in method `ProcessMessageAsync`:
-
-    1) edit the `_criteriaThreshold` from `50` to desired number.
-
-1) (Optional) In `Fotostatur/ImageAnalyzer/Functions.cs`:
-
-    1) In method `ProcessMessageAsync`, uncomment `UploadImage();`
-    1) Edit the `UploadImage` method to have a copy of the image uploaded
+1) (Optional) In method `ProcessMessageAsync`, uncomment `UploadImage();`
+1) (Optional) In method `UploadImage`, make backup in s3 of the image posted
 
 _Test your code by using the CLI commands above to deploy, upload and remove images from S3._
 
