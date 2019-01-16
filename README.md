@@ -124,6 +124,8 @@ In `Fotostatur/ImageAnalyzer/Functions.cs` edit the `DetectLabels` and `ScoreLab
 1) Detect the labels from the image uploaded.
 1) Score the results from detect labels using the `AddTotals` helper function to keep a running total.
 
+Deploy with `dotnet lash deploy Fotostatur --tier Sandbox`
+
 _Test your code by using the CLI commands above to deploy, upload and remove images from S3._
 
 _Use CloudWatch to see the final score change based on criteria added._    
@@ -141,6 +143,8 @@ In `Fotostatur/ImageAnalyzer/Functions.cs` edit the `DetectText` and `ScoreText`
 
 1) Detect any text from the image uploaded.
 1) Score the results from detect text using the `AddTotals` helper function to keep a running total.
+
+Deploy with `dotnet lash deploy Fotostatur --tier Sandbox`
 
 _Test your code by using the CLI commands above to deploy, upload and remove images from S3._
 
@@ -163,6 +167,8 @@ In `Fotostatur/ImageAnalyzer/Functions.cs` edit the `CompareFaces` and `ScoreCom
 1) Compare the headshot and the image uploaded.
 1) Score the results from comparison using the `AddTotals` helper function to keep a running total.
 
+Deploy with `dotnet lash deploy Fotostatur --tier Sandbox`
+
 _Test your code by using the CLI commands above to deploy, upload and remove images from S3._
 
 _Use CloudWatch to see the final score change based on criteria added._
@@ -182,6 +188,8 @@ In `Fotostatur/ImageAnalyzer/Functions.cs` edit the `DetectFaces` and `ScoreFace
 1) Detect faces from the image uploaded.
 1) See `ScoreFaces` for a commented list of objects to generate criteria with. Use at least one.
 1) Score the results from generated criteria using the `AddTotals` helper function to keep a running total.
+
+Deploy with `dotnet lash deploy Fotostatur --tier Sandbox`
 
 _Test your code by using the CLI commands above to deploy, upload and remove images from S3._
 
@@ -223,6 +231,8 @@ In `Fotostatur/ImageAnalyzer/Functions.cs` do the following
 
 1) (Optional) In method `ProcessMessageAsync`, uncomment `UploadImage();`
 1) (Optional) In method `UploadImage`, make backup in s3 of the image posted
+
+Deploy with `dotnet lash deploy Fotostatur --tier Sandbox`
 
 _Test your code by using the CLI commands above to deploy, upload and remove images from S3._
 
