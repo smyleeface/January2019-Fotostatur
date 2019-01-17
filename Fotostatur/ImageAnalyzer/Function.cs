@@ -148,7 +148,7 @@ namespace Fotostatur.ImageAnalyzer {
                 "person"
             };
             foreach (var detectedLabel in detectLabelsResponse.Labels) {
-                if (!labelCriteria.Contains(detectedLabel.Name)) {
+                if (!labelCriteria.Contains(detectedLabel.Name.ToLower())) {
                     LogInfo($"{detectedLabel.Name}: Invalid");
                 }
                 else {
@@ -187,7 +187,7 @@ namespace Fotostatur.ImageAnalyzer {
                 totalPoints = 100;
             }
             else {
-                LogInfo($"Detected text: no points awarded");
+                LogInfo($"Detected no text: no points awarded");
             }
             AddTotals("detected text", totalPoints);
         }
@@ -251,20 +251,20 @@ namespace Fotostatur.ImageAnalyzer {
             // ageRange, beard, boundingBox, eyeglasses, eyesOpen, gender, mouthOpen, mustache, pose, quality, smile, sunglasses
             var detail = detectFactResponse.FaceDetails.First();
             if (38 > detail.AgeRange.Low && 38 < detail.AgeRange.High) {
-                var middleAgeRange = detail.AgeRange.High - (detail.AgeRange.High - detail.AgeRange.Low);
-                LogInfo($"Age Range {middleAgeRange}: valid");
+                LogInfo($"Age Range is within 38 years old");
                 AddTotals("age range", 100);
             }
             else {
-                var middleAgeRange = detail.AgeRange.High - detail.AgeRange.Low;
-                LogInfo($"Age Range {middleAgeRange}: invalid");
+                LogInfo($"Age Range is not within 38 years old");
+                AddTotals("age range", 0);
             }
             if (!detail.Eyeglasses.Value) {
-                LogInfo($"No Eyeglasses: valid");
-                AddTotals("eyeglasses", detail.Eyeglasses.Confidence);
+                LogInfo($"No Eyeglasses found: points awarded");
+                AddTotals("no eyeglasses", detail.Eyeglasses.Confidence);
             }
             else {
-                LogInfo($"No Eyeglasses: invalid");
+                LogInfo($"Eyeglasses found: no points");
+                AddTotals("no eyeglasses", 0);
             }
             // var ageRange = detail.AgeRange;
             // var beard = detail.Beard;
